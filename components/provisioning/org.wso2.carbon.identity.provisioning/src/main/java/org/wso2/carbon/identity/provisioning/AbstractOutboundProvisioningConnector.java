@@ -23,6 +23,7 @@ import org.wso2.carbon.CarbonConstants;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.identity.application.common.model.ClaimMapping;
 import org.wso2.carbon.identity.application.common.model.Property;
+import org.wso2.carbon.user.core.util.UserCoreUtil;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -99,7 +100,7 @@ public abstract class AbstractOutboundProvisioningConnector implements Serializa
                 IdentityProvisioningConstants.PASSWORD_CLAIM_URI, getUserStoreDomainName());
 
         if (claimValue != null && claimValue.size() > 0 && claimValue.get(0) != null) {
-            return claimValue.get(0);
+            return UserCoreUtil.removeDomainFromName(claimValue.get(0));
         }
 
         return UUID.randomUUID().toString();

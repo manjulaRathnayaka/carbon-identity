@@ -112,7 +112,7 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
      * @param userEntity
      * @throws IdentityProvisioningException
      */
-    private void updateUser(ProvisioningEntity userEntity) throws IdentityProvisioningException {
+    protected void updateUser(ProvisioningEntity userEntity) throws IdentityProvisioningException {
 
         try {
 
@@ -153,7 +153,7 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
      * @param userEntity
      * @throws UserStoreException
      */
-    private void createUser(ProvisioningEntity userEntity) throws IdentityProvisioningException {
+    protected void createUser(ProvisioningEntity userEntity) throws IdentityProvisioningException {
 
         try {
 
@@ -190,7 +190,7 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
      * @param userEntity
      * @throws IdentityProvisioningException
      */
-    private void deleteUser(ProvisioningEntity userEntity) throws IdentityProvisioningException {
+    protected void deleteUser(ProvisioningEntity userEntity) throws IdentityProvisioningException {
 
         try {
             List<String> userNames = getUserNames(userEntity.getAttributes());
@@ -221,7 +221,7 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
      * @return
      * @throws IdentityProvisioningException
      */
-    private String createGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
+    protected String createGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
         try {
             List<String> groupNames = getGroupNames(groupEntity.getAttributes());
             String groupName = null;
@@ -260,7 +260,7 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
      * @param groupEntity
      * @throws IdentityProvisioningException
      */
-    private void deleteGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
+    protected void deleteGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
         try {
 
             List<String> groupNames = getGroupNames(groupEntity.getAttributes());
@@ -289,7 +289,7 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
      * @param groupEntity
      * @throws IdentityProvisioningException
      */
-    private void updateGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
+    protected void updateGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
         try {
 
             List<String> groupNames = getGroupNames(groupEntity.getAttributes());
@@ -317,6 +317,43 @@ public class SCIMProvisioningConnector extends AbstractOutboundProvisioningConne
             ProvisioningClient scimProvsioningClient = new ProvisioningClient(scimProvider, group,
                     httpMethod, null);
             scimProvsioningClient.provisionUpdateGroup();
+
+        } catch (Exception e) {
+            throw new IdentityProvisioningException("Error while updating group.", e);
+        }
+    }
+    /**
+     * @param groupEntity
+     * @throws IdentityProvisioningException
+     */
+    protected void patchGroup(ProvisioningEntity groupEntity) throws IdentityProvisioningException {
+        try {
+
+            List<String> groupNames = getGroupNames(groupEntity.getAttributes());
+            String groupName = null;
+
+            if (groupNames != null && groupNames.size() > 0 && groupNames.get(0) != null) {
+                groupName = groupNames.get(0);
+            }
+
+            int httpMethod = 5;
+            Group group = new Group();
+            group.setDisplayName(groupName);
+
+            List<String> userList = getUserNames(groupEntity.getAttributes());
+
+            if (userList != null && userList.size() > 0) {
+                for (Iterator<String> iterator = userList.iterator(); iterator.hasNext(); ) {
+                    String userName = iterator.next();
+                    Map<String, Object> members = new HashMap<String, Object>();
+                    members.put(SCIMConstants.CommonSchemaConstants.DISPLAY, userName);
+                    group.setMember(members);
+                }
+            }
+
+            ProvisioningClient scimProvsioningClient = new ProvisioningClient(scimProvider, group,
+                    httpMethod, null);
+            scimProvsioningClient.provisionPatchGroup();
 
         } catch (Exception e) {
             throw new IdentityProvisioningException("Error while updating group.", e);
