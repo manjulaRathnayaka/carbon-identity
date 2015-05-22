@@ -34,7 +34,7 @@ public class SCIMProviderConstants {
 
     public static final String ID = "ID";
     public static final String INPUT_FORMAT = "INPUT_FORMAT";
-    public static final String OUTPUT_FORMAT = "INPUT_FORMAT";
+    public static final String OUTPUT_FORMAT = "OUTPUT_FORMAT";
     public static final String AUTHORIZATION = "AUTHORIZATION";
     public static final String RESOURCE_STRING = "RESOURCE_STRING";
     public static final String HTTP_VERB = "HTTP_VERB";
